@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nadeline AI 👑🔥</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #8B0000, #FFD700, #000000);
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      color: #FFD700;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .chatbox {
+      width: 90%;
+      max-width: 600px;
+      height: 70vh;
+      background: rgba(255, 215, 0, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px 0 rgba(255, 215, 0, 0.37);
+      backdrop-filter: blur(10px);
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .chatlog {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .bot {
+      background: rgba(255, 0, 0, 0.2);
+      align-self: flex-start;
+    }
+
+    .user {
+      background: rgba(255, 215, 0, 0.2);
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 15px;
+      border-radius: 25px;
+      border: none;
+      margin-top: 10px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    button {
+      padding: 15px 25px;
+      margin-left: 10px;
+      border-radius: 25px;
+      border: none;
+      background-color: #e63946;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff4b5c;
+    }
+
+    .loader {
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid #FFD700;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Nadeline AI 👑✨</h1>
+<div class="chatbox" id="chatbox">
+    <!-- Chat logs -->
+</div>
+
+<div id="typingStatus"></div>
+
+<input type="text" id="userInput" placeholder="Type your question...">
+<button onclick="sendMessage()">Send</button>
+
+<!-- Cool suggestions -->
+<div id="suggestions">
+  <button onclick="quickSend('Tell me about Nadeline')">🌟 About Nadeline</button>
+  <button onclick="quickSend('Generate an image of a futuristic city')">🖼️ Generate City Image</button>
+  <button onclick="quickSend('How to live sustainably?')">🌱 Sustainability Tips</button>
+</div>
+
+<script>
+  const apiKey = "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"; // <<<<< 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
+  const chatbox = document.getElementById("chatbox");
+  const typingStatus = document.getElementById("typingStatus");
+
+  // 📚 Nadeline special info
+  const nadelineData = {
+    "city": "Nadeline is a futuristic eco-smart city based on clean energy, zero waste, green transportation, biodiversity preservation, smart technology, and inclusive digital innovation.",
+    "energy": "Nadeline runs fully on renewable energy like solar, wind, and hydro. It aims for 100% net-zero emissions by 2030.",
+    "transport": "Nadeline uses only electric, solar-powered, and smart autonomous vehicles. No gasoline cars are allowed inside the city.",
+    "biodiversity": "Nadeline protects forests, rivers, oceans, and has massive green parks in every district to support animals and nature.",
+    "technology": "Nadeline uses AI, IoT, and blockchain to make government services smarter and faster for everyone.",
+    "digital divide": "Nadeline ensures every citizen has free access to high-speed internet, devices, and digital education to bridge the digital gap."
+  };
+
+  function quickSend(text) {
+    document.getElementById("userInput").value = text;
+    sendMessage();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const userText = input.value.trim();
+    if (userText === "") return;
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "chatlog user";
+    userMsg.innerText = userText;
+    chatbox.appendChild(userMsg);
+
+    input.value = "";
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    typingStatus.innerText = "Nadeline is typing...";
+
+    const loader = document.createElement("div");
+    loader.className = "loader";
+    chatbox.appendChild(loader);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    let botReply = "";
+
+    if (userText.toLowerCase().includes("nadeline")) {
+      // Custom Nadeline Answers
+      if (userText.toLowerCase().includes("energy")) {
+        botReply = nadelineData.energy;
+      } else if (userText.toLowerCase().includes("transport") || userText.toLowerCase().includes("vehicle")) {
+        botReply = nadelineData.transport;
+      } else if (userText.toLowerCase().includes("biodiversity") || userText.toLowerCase().includes("nature")) {
+        botReply = nadelineData.biodiversity;
+      } else if (userText.toLowerCase().includes("technology") || userText.toLowerCase().includes("smart")) {
+        botReply = nadelineData.technology;
+      } else if (userText.toLowerCase().includes("digital") || userText.toLowerCase().includes("divide")) {
+        botReply = nadelineData.digital_divide;
+      } else {
+        botReply = nadelineData.city;
+      }
+    } else {
+      // Normal OpenAI reply
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: userText }],
+          temperature: 0.7,
+          max_tokens: 500
+        })
+      });
+      const data = await response.json();
+      botReply = data.choices[0]?.message?.content || "Oops, something went wrong!";
+    }
+
+    typingStatus.innerText = "";
+    chatbox.removeChild(loader);
+
+    const botMsg = document.createElement("div");
+    botMsg.className = "chatlog bot";
+    botMsg.innerText = "";
+    chatbox.appendChild(botMsg);
+
+    let index = 0;
+    const speed = 30;
+    function typeWriter() {
+      if (index < botReply.length) {
+        botMsg.innerText += botReply.charAt(index);
+        index++;
+        setTimeout(typeWriter, speed);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+    }
+    typeWriter();
+
+    const audio = new Audio("https://www.myinstants.com/media/sounds/pop-up-off.mp3");
+    audio.play();
+  }
+
+  document.getElementById("userInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") sendMessage();
+  });
+
+</script>
+
+</body>
+</html>
